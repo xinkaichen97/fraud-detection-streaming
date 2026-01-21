@@ -1,0 +1,26 @@
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+*.so
+*.dylib
+
+# Feast / Data
+feature_repo/data/
+.feast/
+*.db
+*.sqlite
+
+# Environment Variables (Secrets)
+.env
+
+# Docker
+.pytest_cache/
+
+# Mac
+.DS_Store
+
+# IDEs
+.vscode/
+.idea/

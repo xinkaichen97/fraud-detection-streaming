@@ -1,0 +1,21 @@
+project: fraud_detection
+
+registry:
+  registry_type: sql
+  path: postgresql://user:password@localhost:5432/fraud_detection
+  cache_ttl_seconds: 60
+
+provider: local
+
+online_store:
+  type: redis
+  connection_string: "localhost:6379"
+
+offline_store:
+  type: postgres
+  host: localhost
+  port: 5432
+  database: fraud_detection
+  db_schema: public
+  user: user
+  password: password
