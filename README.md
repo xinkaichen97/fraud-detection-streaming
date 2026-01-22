@@ -49,20 +49,25 @@ fraud-detection-streaming/
 ├── requirements.txt            # Python dependencies
 ├── pyproject.toml             # Project configuration
 │
-├── producer.py                # Kafka transaction generator
-├── stream_processor.py        # Feature engineering pipeline
-├── prediction_service.py      # FastAPI prediction endpoint
+├── services/                  # Microservices
+│   ├── producer.py            # Kafka transaction generator
+│   ├── stream_processor.py    # Feature engineering pipeline
+│   └── prediction_service.py  # FastAPI prediction endpoint
 │
-├── train_model.py             # Model training script
-├── fraud_model.json           # Trained XGBoost model
+├── models/                    # ML models
+│   ├── train_model.py         # Model training script
+│   └── fraud_model.json       # Trained XGBoost model
 │
-├── init_feast.py              # Feature store initialization
-├── init_db.py                 # Database setup (local)
+├── scripts/                   # Setup and initialization
+│   ├── init_feast.py          # Feature store initialization
+│   └── init_db.py             # Database setup (local)
 │
-└── feature_repo/
-    ├── features.py            # Feature definitions
-    ├── feature_store_docker.yaml   # Feast config (Docker)
-    └── feature_store_local.yaml    # Feast config (local)
+├── feature_repo/              # Feast feature definitions
+│   ├── features.py            # Feature definitions
+│   ├── feature_store_docker.yaml   # Feast config (Docker)
+│   └── feature_store_local.yaml    # Feast config (local)
+│
+└── debug/                     # Debug utilities
 ```
 
 ## Features
@@ -150,10 +155,10 @@ pip install -r requirements.txt
 ### Train the Model
 
 ```bash
-python train_model.py
+python models/train_model.py
 ```
 
-This generates `fraud_model.json` with synthetic training data.
+This generates `models/fraud_model.json` with synthetic training data.
 
 ### Initialize Feature Store (Local)
 
@@ -166,13 +171,13 @@ feast apply
 
 ```bash
 # Start producer (requires Kafka running)
-python producer.py
+python services/producer.py
 
 # Start stream processor (requires Kafka, Redis, PostgreSQL)
-python stream_processor.py
+python services/stream_processor.py
 
 # Start API (requires Redis, PostgreSQL, trained model)
-uvicorn prediction_service:app --reload
+uvicorn services.prediction_service:app --reload
 ```
 
 ## How It Works

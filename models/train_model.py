@@ -64,7 +64,9 @@ def train():
     print(classification_report(y_test, y_pred))
     
     # Save Model
-    model_filename = "fraud_model.json"
+    import os
+    model_dir = os.path.dirname(os.path.abspath(__file__))
+    model_filename = os.path.join(model_dir, "fraud_model.json")
     model.save_model(model_filename)
     print(f"✅ Model saved to {model_filename}")
 

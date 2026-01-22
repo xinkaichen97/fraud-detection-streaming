@@ -54,7 +54,7 @@ services:
       - KAFKA_BROKER=kafka:29092
     volumes:
       - ./feature_repo/feature_store_docker.yaml:/app/feature_repo/feature_store.yaml
-    command: ["python", "init_feast.py"]
+    command: ["python", "scripts/init_feast.py"]
 
   producer:
     build: .
@@ -66,7 +66,7 @@ services:
         condition: service_completed_successfully
     environment:
       - KAFKA_BROKER=kafka:29092
-    command: ["python", "producer.py"]
+    command: ["python", "services/producer.py"]
 
   processor:
     build: .
@@ -84,7 +84,7 @@ services:
       - KAFKA_BROKER=kafka:29092
     volumes:
       - ./feature_repo/feature_store_docker.yaml:/app/feature_repo/feature_store.yaml
-    command: ["python", "stream_processor.py"]
+    command: ["python", "services/stream_processor.py"]
 
   api:
     build: .
@@ -99,7 +99,7 @@ services:
     ports: ["8000:8000"]
     volumes:
       - ./feature_repo/feature_store_docker.yaml:/app/feature_repo/feature_store.yaml
-    command: ["uvicorn", "prediction_service:app", "--host", "0.0.0.0", "--port", "8000"]
+    command: ["uvicorn", "services.prediction_service:app", "--host", "0.0.0.0", "--port", "8000"]
 
 volumes:
   postgres_data:

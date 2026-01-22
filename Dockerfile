@@ -20,4 +20,4 @@ RUN pip install --no-cache-dir -r requirements.txt
 COPY . .
 
 # Default command
-CMD ["python", "prediction_service.py"]
+CMD ["python", "services/prediction_service.py"]

@@ -10,8 +10,8 @@ app = FastAPI()
 fs = FeatureStore(repo_path="./feature_repo")
 
 print("Loading model...")
-model = xgb.XGBClassifier()
-model.load_model("fraud_model.json")
+model = xgb.Booster()
+model.load_model("./models/fraud_model.json")
 print("Model loaded.")
 
 class PredictionRequest(BaseModel):
@@ -39,13 +39,10 @@ async def predict_fraud(request: PredictionRequest):
     total_amt = features["total_amount_10m"][0] or 0.0
     credit_score = features["credit_score"][0] or 700
 
-    input_vector = pd.DataFrame([{
-        "transaction_count_10m": txn_count,
-        "total_amount_10m": total_amt,
-        "credit_score": credit_score
-    }])
+    # Use DMatrix for faster prediction (avoiding DataFrame overhead)
+    input_vector = xgb.DMatrix([[txn_count, total_amt, credit_score]])
 
-    fraud_prob = model.predict_proba(input_vector)[0][1]
+    fraud_prob = model.predict(input_vector)[0]
     is_fraud = fraud_prob > 0.5
 
     total_latency_ms = (time.time() - start_time) * 1000
