@@ -1,4 +1,4 @@
-# Real-Time Fraud Detection System
+# Cerberus: Real-Time Fraud Detection System
 
 A production-grade streaming fraud detection pipeline that processes transactions in real-time with sub-10ms latency. Built with Kafka, Feast feature store, and XGBoost for high-performance ML inference.
 
