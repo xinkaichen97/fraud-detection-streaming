@@ -50,6 +50,13 @@ def main():
             "event_timestamp": [datetime.fromisoformat(timestamp)],
             "transaction_count_10m": [count_10m],
             "total_amount_10m": [total_amount_10m],
+            "distance_from_home": [float(event.get('distance_from_home', 0.0))],
+            "distance_from_last_transaction": [float(event.get('distance_from_last_transaction', 0.0))],
+            "ratio_to_median_purchase_price": [float(event.get('ratio_to_median_purchase_price', 0.0))],
+            "repeat_retailer": [int(event.get('repeat_retailer', 0))],
+            "used_chip": [int(event.get('used_chip', 0))],
+            "used_pin_number": [int(event.get('used_pin_number', 0))],
+            "online_order": [int(event.get('online_order', 0))],
         })
 
         try:

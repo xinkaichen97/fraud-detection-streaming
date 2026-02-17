@@ -8,6 +8,7 @@ venv/
 
 # Feast / Data
 feature_repo/data/
+data/
 .feast/
 *.db
 *.sqlite

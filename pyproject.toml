@@ -10,6 +10,7 @@ dependencies = [
     "fastapi>=0.128.0",
     "feast[postgres,redis]>=0.59.0",
     "kafka-python>=2.3.0",
+    "kaggle>=2.0.0",
     "pandas>=2.3.3",
     "psycopg2-binary>=2.9.11",
     "scikit-learn>=1.8.0",

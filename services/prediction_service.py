@@ -1,6 +1,4 @@
 import time
-import pandas as pd
-import numpy as np
 import xgboost as xgb
 from fastapi import FastAPI, HTTPException
 from pydantic import BaseModel
@@ -8,6 +6,18 @@ from feast import FeatureStore
 
 app = FastAPI()
 fs = FeatureStore(repo_path="./feature_repo")
+
+FEATURE_COLUMNS = [
+    "distance_from_home",
+    "distance_from_last_transaction",
+    "ratio_to_median_purchase_price",
+    "repeat_retailer",
+    "used_chip",
+    "used_pin_number",
+    "online_order",
+]
+
+FEAST_FEATURE_REFS = [f"transaction_stats_fv:{col}" for col in FEATURE_COLUMNS]
 
 print("Loading model...")
 model = xgb.Booster()
@@ -23,11 +33,7 @@ async def predict_fraud(request: PredictionRequest):
 
     try:
         features = fs.get_online_features(
-            features=[
-                "transaction_stats_fv:transaction_count_10m",
-                "transaction_stats_fv:total_amount_10m",
-                "user_credit_score_fv:credit_score"
-            ],
+            features=FEAST_FEATURE_REFS,
             entity_rows=[{"user_id": request.user_id}]
         ).to_dict()
     except Exception as e:
@@ -35,12 +41,16 @@ async def predict_fraud(request: PredictionRequest):
 
     feature_latency_ms = (time.time() - start_time) * 1000
 
-    txn_count = features["transaction_count_10m"][0] or 0
-    total_amt = features["total_amount_10m"][0] or 0.0
-    credit_score = features["credit_score"][0] or 700
+    feature_values = []
+    feature_dict = {}
+    for col in FEATURE_COLUMNS:
+        val = features[col][0]
+        if val is None:
+            val = 0.0
+        feature_values.append(float(val))
+        feature_dict[col] = val
 
-    # Use DMatrix for faster prediction (avoiding DataFrame overhead)
-    input_vector = xgb.DMatrix([[txn_count, total_amt, credit_score]])
+    input_vector = xgb.DMatrix([feature_values], feature_names=FEATURE_COLUMNS)
 
     fraud_prob = model.predict(input_vector)[0]
     is_fraud = fraud_prob > 0.5
@@ -51,11 +61,7 @@ async def predict_fraud(request: PredictionRequest):
         "user_id": request.user_id,
         "prediction": "FRAUD" if is_fraud else "LEGIT",
         "probability": float(fraud_prob),
-        "features": {
-            "txn_count_10m": txn_count,
-            "total_amount_10m": total_amt,
-            "credit_score": credit_score
-        },
+        "features": feature_dict,
         "latency_stats": {
             "feature_retrieval_ms": round(feature_latency_ms, 2),
             "total_latency_ms": round(total_latency_ms, 2)

@@ -26,6 +26,13 @@ def init_db():
             "user_id": user_id,
             "transaction_count_10m": 0,
             "total_amount_10m": 0.0,
+            "distance_from_home": 0.0,
+            "distance_from_last_transaction": 0.0,
+            "ratio_to_median_purchase_price": 0.0,
+            "repeat_retailer": 0,
+            "used_chip": 0,
+            "used_pin_number": 0,
+            "online_order": 0,
             "event_timestamp": datetime.now()
         })
     df_stats = pd.DataFrame(stats_data)
