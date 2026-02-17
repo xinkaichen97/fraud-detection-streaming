@@ -15,6 +15,8 @@ FEATURE_COLUMNS = [
     "used_chip",
     "used_pin_number",
     "online_order",
+    "transaction_count_10m",
+    "total_amount_10m",
 ]
 
 FEAST_FEATURE_REFS = [f"transaction_stats_fv:{col}" for col in FEATURE_COLUMNS]

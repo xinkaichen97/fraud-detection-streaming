@@ -1,4 +1,5 @@
 import os
+import numpy as np
 import pandas as pd
 import xgboost as xgb
 from sklearn.model_selection import train_test_split
@@ -12,12 +13,28 @@ FEATURE_COLUMNS = [
     "used_chip",
     "used_pin_number",
     "online_order",
+    "transaction_count_10m",
+    "total_amount_10m",
 ]
 
 def load_data():
     csv_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "data", "card_transdata.csv")
     df = pd.read_csv(csv_path)
     print(f"Loaded {len(df)} rows, fraud rate: {df['fraud'].mean():.4%}")
+
+    # Synthesize streaming features (not in Kaggle dataset)
+    # Fraud transactions tend to have higher velocity (more txns, higher amounts)
+    np.random.seed(42)
+    n = len(df)
+    is_fraud = df["fraud"].values
+
+    df["transaction_count_10m"] = np.where(
+        is_fraud, np.random.poisson(8, n), np.random.poisson(2, n)
+    )
+    df["total_amount_10m"] = np.where(
+        is_fraud, np.random.exponential(5000, n), np.random.exponential(50, n)
+    )
+
     return df
 
 def train():
