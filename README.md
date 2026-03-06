@@ -18,11 +18,11 @@ This system demonstrates a modern MLOps architecture for real-time fraud detecti
 │  Producer   │────▶│    Kafka     │────▶│  Processor  │
 │ (Synthetic) │     │ (Streaming)  │     │  (Features) │
 └─────────────┘     └──────────────┘     └──────┬──────┘
-                                                 │
-                                                 ▼
+                                                │
+                                                ▼
                     ┌──────────────┐     ┌─────────────┐
                     │  Prediction  │◀────│    Feast    │
-                    │     API      │     │ Feature Store│
+                    │     API      │     │Feature Store│
                     └──────────────┘     └─────────────┘
                                          │             │
                                     Redis (Online) Postgres (Offline)
